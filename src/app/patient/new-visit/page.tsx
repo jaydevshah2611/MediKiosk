@@ -296,14 +296,24 @@ function NewVisitContent() {
 
     const dept = mapBodySystemToDepartment(selectedBodySystem);
     const isPriority = priorityFlags.length > 0;
+    const severityScore = Math.max(
+      isPriority ? 8 : 0,
+      ...symptomResponses.map((s) => s.severity || 0),
+      ...selectedSymptoms.map(() => 0)
+    ) || (isPriority ? 8 : 4);
 
     // 1. Issue live token in queue
     const token = tokenManager.issueToken(
       user.id,
       user.name || "Patient",
       dept,
-      isPriority,
-      selectedSymptoms.map(s => s.name)
+      isPriority || severityScore >= 8,
+      selectedSymptoms.map(s => s.name),
+      {
+        severityScore: severityScore || 4,
+        hospitalName: selectedHospitalName,
+        phone: user.phone,
+      }
     );
     setCreatedToken(token);
 
@@ -346,7 +356,7 @@ function NewVisitContent() {
       {/* ISL Sign Language Avatar Accessibility Card */}
       {showSignLanguageAvatar && (
         <SignLanguageAvatar
-          currentText="Please choose the affected body system or tap Direct General Consultation."
+          currentText="Please choose the affected body system. Head, chest or abdomen."
           stepName="body_system"
           language={selectedLanguage}
         />
@@ -439,7 +449,11 @@ function NewVisitContent() {
         {/* ISL Sign Language Avatar Accessibility Card */}
         {showSignLanguageAvatar && (
           <SignLanguageAvatar
-            currentText={`Choose from the listed symptoms for ${currentSystem?.name || "General"} or speak your complaint into the microphone.`}
+            currentText={
+              selectedSymptoms.length
+                ? `Symptoms selected: ${selectedSymptoms.map((s) => s.name).join(", ")}. Pain. Confirm.`
+                : `Choose symptoms for ${currentSystem?.name || "General"}. Pain. Body area.`
+            }
             stepName="symptom_selection"
             language={selectedLanguage}
           />
@@ -611,7 +625,7 @@ function NewVisitContent() {
         {/* ISL Sign Language Avatar Accessibility Card */}
         {showSignLanguageAvatar && (
           <SignLanguageAvatar
-            currentText={`Rate the severity and duration for ${currentSymptom.name}.`}
+            currentText={`Rate the severity scale 1-10 for ${currentSymptom.name}. Pain. Doctor.`}
             stepName="follow_up"
             language={selectedLanguage}
           />
@@ -743,7 +757,11 @@ function NewVisitContent() {
       {/* ISL Sign Language Avatar Accessibility Card */}
       {showSignLanguageAvatar && (
         <SignLanguageAvatar
-          currentText="Review your recorded symptoms and confirm to issue your hospital OPD token."
+          currentText={
+            priorityFlags.length
+              ? "Urgent emergency. Review symptoms. Confirm token. Doctor hospital."
+              : "Review symptoms. Confirm token. Doctor hospital. Wait queue."
+          }
           stepName="review"
           language={selectedLanguage}
         />

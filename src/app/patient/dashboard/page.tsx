@@ -11,6 +11,7 @@ import { visitManager } from "@/lib/visitManager";
 import { tokenManager } from "@/lib/tokenManager";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { InlineGuideBanner } from "@/components/ui/InlineGuideBanner";
+import { syncLiveFromServer } from "@/lib/liveClient";
 
 export default function PatientDashboard() {
   const router = useRouter();
@@ -20,21 +21,24 @@ export default function PatientDashboard() {
   const [activeTokens, setActiveTokens] = useState<any[]>([]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
+    const hydrate = async () => {
+      if (typeof window === "undefined") return;
+      await syncLiveFromServer().catch(() => {});
       const userData = localStorage.getItem("currentUser");
       if (userData) {
         const parsedUser = JSON.parse(userData);
         setUser(parsedUser);
-
         const visits = visitManager.getVisits(parsedUser.id);
         setRecentVisitsCount(visits.length);
-
         const tokens = tokenManager.getTokensByPatient(parsedUser.id);
         setActiveTokens(tokens.filter(t => t.status === "waiting" || t.status === "priority" || t.status === "in_consultation"));
       } else {
         router.push("/");
       }
-    }
+    };
+    hydrate();
+    const timer = setInterval(hydrate, 4000);
+    return () => clearInterval(timer);
   }, [router]);
 
   if (!user) {

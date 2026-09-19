@@ -204,7 +204,7 @@ export default function PatientProfilePage() {
                     onClick={() => handleLanguageSelect(lang.code as LanguageCode)}
                     className={`p-3 rounded-xl border-2 text-left transition-all cursor-pointer ${
                       language === lang.code
-                        ? "border-primary bg-primary/10 text-primary font-bold shadow-xs scale-102"
+                        ? "border-primary bg-primary/10 text-primary font-bold shadow-xs scale-[1.02]"
                         : "border-border hover:border-primary/40 bg-background text-foreground"
                     }`}
                   >

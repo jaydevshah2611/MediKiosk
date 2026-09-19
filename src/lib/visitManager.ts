@@ -82,7 +82,19 @@ export class VisitManager {
     }
 
     localStorage.setItem(this.storageKey, JSON.stringify(visits));
+    void import("./liveClient").then((m) => m.upsertLive({ visits: [visit] })).catch(() => {});
     return visit;
+  }
+
+  upsertVisits(incoming: PatientVisitRecord[]): void {
+    if (typeof window === "undefined") return;
+    const visits = this.getVisits();
+    const map = new Map(visits.map((v) => [v.id, v]));
+    for (const visit of incoming) {
+      const prev = map.get(visit.id);
+      map.set(visit.id, prev ? { ...prev, ...visit } : visit);
+    }
+    localStorage.setItem(this.storageKey, JSON.stringify([...map.values()]));
   }
 
   deleteVisit(visitId: string): boolean {

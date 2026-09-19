@@ -19,6 +19,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 const PRESET_DOCTORS = [
   {
@@ -151,9 +152,7 @@ export default function DoctorLogin() {
             <Stethoscope className="w-5 h-5 text-primary" />
             <span>NMC / ABDM Doctor Clinical Portal</span>
           </div>
-          <div className="text-xs text-muted font-mono hidden sm:block">
-            Medical Council Verification Active
-          </div>
+          <LanguageSwitcher compact />
         </div>
       </div>
 

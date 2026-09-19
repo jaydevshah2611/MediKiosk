@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -40,20 +40,22 @@ import {
   Sliders,
   Send
 } from "lucide-react";
-import { useTranslation, type LanguageCode } from "@/lib/languages";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { VisitManager, type PatientVisitRecord } from "@/lib/visitManager";
 import { TokenManager, departments } from "@/lib/tokenManager";
 import { hospitalManager, type HospitalDoctor } from "@/lib/hospitalManager";
 import { type Department, type Token } from "@/types/token";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { SignLanguageAvatar } from "@/components/patient/SignLanguageAvatar";
+import { syncLiveFromServer, sortTokensBySeverity } from "@/lib/liveClient";
 
 const visitManager = new VisitManager();
 const tokenManager = new TokenManager();
 
 export default function HospitalDashboard() {
   const router = useRouter();
+  const { t, setLanguage } = useLanguage();
   const [user, setUser] = useState<any>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>("en");
-  const { t } = useTranslation(selectedLanguage);
 
   // Active navigation tab & filter
   const [activeTab, setActiveTab] = useState<"dashboard" | "tokens" | "doctors" | "departments" | "patients" | "analytics">("dashboard");
@@ -90,6 +92,8 @@ export default function HospitalDashboard() {
   // Success message banner
   const [bannerMessage, setBannerMessage] = useState<string | null>(null);
 
+  const langReady = useRef(false);
+
   const loadDashboardData = () => {
     if (typeof window === "undefined") return;
     const userData = localStorage.getItem("currentUser");
@@ -100,14 +104,20 @@ export default function HospitalDashboard() {
         return;
       }
       setUser(parsedUser);
-      setSelectedLanguage(parsedUser.preferredLanguage || "en");
+      if (!langReady.current && parsedUser.preferredLanguage) {
+        setLanguage(parsedUser.preferredLanguage);
+        langReady.current = true;
+      }
     } else {
       router.push("/auth/hospital/login");
       return;
     }
 
-    // Load live visits and doctors
-    const allVisits = visitManager.getVisits();
+    const allVisits = visitManager.getVisits().map((v) => ({
+      ...v,
+      symptoms: v.symptoms || [],
+      priorityFlags: v.priorityFlags || []
+    }));
     setVisits(allVisits);
     const docs = hospitalManager.getDoctors();
     setDoctors(docs);
@@ -115,6 +125,15 @@ export default function HospitalDashboard() {
 
   useEffect(() => {
     loadDashboardData();
+    const timer = setInterval(() => {
+      syncLiveFromServer()
+        .then(() => {
+          loadDashboardData();
+          setRefreshTokenKey((prev) => prev + 1);
+        })
+        .catch(() => {});
+    }, 4000);
+    return () => clearInterval(timer);
   }, [router]);
 
   const handleLogout = () => {
@@ -135,7 +154,7 @@ export default function HospitalDashboard() {
       const q = tokenManager.getDepartmentQueue(dept.id);
       list.push(...q.tokens);
     });
-    return list.sort((a, b) => new Date(b.issuedAt).getTime() - new Date(a.issuedAt).getTime());
+    return sortTokensBySeverity(list);
   }, [visits, refreshTokenKey]);
 
   // Dynamic Metrics - Exact live counts based on queue status
@@ -234,7 +253,9 @@ export default function HospitalDashboard() {
       tokenPatientName,
       tokenDept,
       tokenPriority,
-      symptoms
+      symptoms,
+      { severityScore: tokenPriority ? 9 : 4, hospitalName: user?.hospitalName }
+    );
     );
 
     // Persist visit record
@@ -308,11 +329,12 @@ export default function HospitalDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher compact />
             <Button
               onClick={() => setShowIssueTokenModal(true)}
               className="bg-primary text-primary-foreground font-semibold text-xs sm:text-sm flex items-center gap-1.5 shadow-sm cursor-pointer"
             >
-              <Plus className="w-4 h-4" /> Issue OPD Token
+              <Plus className="w-4 h-4" /> {t("issue_opd_token")}
             </Button>
             <Button
               variant="outline"
@@ -321,7 +343,7 @@ export default function HospitalDashboard() {
               className="text-muted hover:text-foreground flex items-center gap-1.5"
             >
               <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <span className="hidden sm:inline">{t("logout")}</span>
             </Button>
           </div>
         </div>
@@ -739,11 +761,14 @@ export default function HospitalDashboard() {
                       </div>
 
                       <div>
-                        <div className="font-bold text-foreground text-sm flex items-center justify-between">
+                        <div className="font-bold text-foreground text-sm flex items-center justify-between gap-2">
                           <span>{token.patientName}</span>
-                          <span className="text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity font-semibold">Details →</span>
+                          <span className="text-[10px] font-bold text-primary">{t("patient_arriving")}</span>
                         </div>
-                        <div className="text-xs text-muted mt-0.5">Patient ID: {token.patientId}</div>
+                        <div className="text-xs text-muted mt-0.5">
+                          {t("severity")}: {token.severityScore || 4}/10
+                          {token.phone ? ` • ${token.phone}` : ` • ID: ${token.patientId}`}
+                        </div>
                         <div className="text-xs text-primary font-medium mt-0.5 capitalize">
                           Dept: {token.department.replace(/_/g, " ")}
                         </div>
@@ -767,7 +792,7 @@ export default function HospitalDashboard() {
                             onClick={() => handleUpdateTokenStatus(token.id, "in_consultation")}
                             className="flex-1 bg-sky-600 hover:bg-sky-700 text-white text-xs cursor-pointer"
                           >
-                            Call Patient
+                            {t("call_patient")}
                           </Button>
                         )}
                         {token.status !== "completed" && (
@@ -1353,7 +1378,7 @@ export default function HospitalDashboard() {
       {/* ===================== MODAL: TOKEN DETAILS DIALOG ===================== */}
       {selectedTokenDetails && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-surface border border-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4 animate-fade-in-up">
+          <div className="bg-surface border border-border rounded-2xl max-w-2xl w-full p-6 shadow-2xl space-y-4 animate-fade-in-up max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2 font-bold text-foreground text-base">
                 <Clock className="w-5 h-5 text-primary" /> OPD Token Details: {selectedTokenDetails.tokenNumber}
@@ -1362,6 +1387,11 @@ export default function HospitalDashboard() {
                 <X className="w-5 h-5" />
               </button>
             </div>
+
+            <SignLanguageAvatar
+              currentText={`${selectedTokenDetails.patientName}. Token ${selectedTokenDetails.tokenNumber}. ${(selectedTokenDetails.symptoms || []).join(", ") || "Wait queue"}. ${selectedTokenDetails.priority ? "Urgent emergency doctor." : "Wait. Doctor consult."}`}
+              stepName="review"
+            />
 
             <div className="space-y-3 text-xs">
               <div className="flex items-center justify-between p-3 bg-primary/10 rounded-xl border border-primary/20">
@@ -1396,7 +1426,7 @@ export default function HospitalDashboard() {
                 </div>
                 <div>
                   <span className="text-muted block text-[10px] uppercase">Department</span>
-                  <span className="font-semibold text-primary capitalize">{selectedTokenDetails.department.replace(/_/g, " ")}</span>
+                  <span className="font-semibold text-primary capitalize">{(selectedTokenDetails.department || "general_medicine").replace(/_/g, " ")}</span>
                 </div>
                 <div>
                   <span className="text-muted block text-[10px] uppercase">Priority Level</span>

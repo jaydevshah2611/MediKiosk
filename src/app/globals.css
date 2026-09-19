@@ -117,6 +117,258 @@ body {
   line-height: 1.6;
 }
 
+/* Let the global moving background show through page shells */
+.min-h-screen.bg-background {
+  background-color: color-mix(in srgb, var(--background) 42%, transparent) !important;
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(12px);
+}
+
+.glass-card {
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(16px);
+}
+
+.medical-bg {
+  background-image:
+    radial-gradient(circle at 12% 18%, color-mix(in srgb, var(--primary) 10%, transparent), transparent 32%),
+    radial-gradient(circle at 88% 78%, color-mix(in srgb, var(--secondary) 10%, transparent), transparent 36%);
+}
+
+.shadow-neon-purple {
+  box-shadow: 0 0 24px color-mix(in srgb, var(--highlight) 35%, transparent);
+}
+
+.mk-prism {
+  position: absolute;
+  inset: -30%;
+  background: conic-gradient(
+    from 120deg,
+    color-mix(in srgb, var(--primary) 35%, transparent),
+    color-mix(in srgb, var(--secondary) 28%, transparent),
+    color-mix(in srgb, var(--highlight) 30%, transparent),
+    color-mix(in srgb, var(--accent) 26%, transparent),
+    color-mix(in srgb, var(--primary) 35%, transparent)
+  );
+  animation: mk-spin 42s linear infinite;
+  filter: blur(70px) saturate(1.35);
+  opacity: 0.55;
+}
+
+.dark .mk-prism {
+  opacity: 0.42;
+  mix-blend-mode: screen;
+}
+
+.mk-aurora {
+  position: absolute;
+  inset: -15%;
+  background:
+    radial-gradient(ellipse at 12% 18%, color-mix(in srgb, var(--primary) 38%, transparent), transparent 42%),
+    radial-gradient(ellipse at 88% 8%, color-mix(in srgb, var(--secondary) 32%, transparent), transparent 40%),
+    radial-gradient(ellipse at 72% 88%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 46%),
+    radial-gradient(ellipse at 8% 82%, color-mix(in srgb, var(--highlight) 24%, transparent), transparent 42%);
+  animation: mk-aurora 18s ease-in-out infinite alternate;
+  filter: blur(10px);
+}
+
+.mk-orb {
+  position: absolute;
+  border-radius: 9999px;
+  filter: blur(46px);
+  opacity: 0.5;
+  mix-blend-mode: multiply;
+}
+
+.dark .mk-orb {
+  mix-blend-mode: screen;
+  opacity: 0.32;
+}
+
+.mk-orb-a {
+  width: 32rem;
+  height: 32rem;
+  left: -10rem;
+  top: -8rem;
+  background: radial-gradient(circle, var(--primary), transparent 70%);
+  animation: mk-drift-a 16s ease-in-out infinite;
+}
+
+.mk-orb-b {
+  width: 26rem;
+  height: 26rem;
+  right: -8rem;
+  top: 20%;
+  background: radial-gradient(circle, var(--secondary), transparent 70%);
+  animation: mk-drift-b 21s ease-in-out infinite;
+}
+
+.mk-orb-c {
+  width: 22rem;
+  height: 22rem;
+  left: 38%;
+  bottom: -7rem;
+  background: radial-gradient(circle, var(--highlight), transparent 70%);
+  animation: mk-drift-c 19s ease-in-out infinite;
+}
+
+.mk-orb-d {
+  width: 18rem;
+  height: 18rem;
+  right: 18%;
+  bottom: 8%;
+  background: conic-gradient(from 40deg, var(--primary), var(--secondary), var(--highlight), var(--primary));
+  filter: blur(38px);
+  opacity: 0.38;
+  animation: mk-spin 28s linear infinite;
+}
+
+.mk-caustic {
+  position: absolute;
+  inset: -20%;
+  background:
+    repeating-radial-gradient(circle at 30% 40%, color-mix(in srgb, var(--secondary) 18%, transparent) 0 2px, transparent 8px 42px),
+    repeating-radial-gradient(circle at 70% 60%, color-mix(in srgb, var(--primary) 14%, transparent) 0 1px, transparent 10px 50px);
+  animation: mk-caustic 14s ease-in-out infinite alternate;
+  opacity: 0.35;
+  mix-blend-mode: soft-light;
+}
+
+.mk-iris {
+  position: absolute;
+  left: 50%;
+  top: 42%;
+  width: min(70vw, 620px);
+  height: min(70vw, 620px);
+  translate: -50% -50%;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0 8%,
+    color-mix(in srgb, var(--primary) 40%, transparent) 10%,
+    transparent 14% 38%,
+    color-mix(in srgb, var(--secondary) 36%, transparent) 40%,
+    transparent 44% 70%,
+    color-mix(in srgb, var(--highlight) 32%, transparent) 72%,
+    transparent 76% 100%
+  );
+  mask-image: radial-gradient(circle, transparent 42%, black 46%, black 52%, transparent 56%);
+  animation: mk-spin 36s linear infinite;
+  opacity: 0.45;
+  filter: blur(0.4px);
+}
+
+.mk-moire {
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-conic-gradient(from 0deg at 50% 45%, transparent 0 8deg, color-mix(in srgb, var(--primary) 8%, transparent) 8deg 9deg);
+  animation: mk-spin 90s linear infinite reverse;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  mask-image: radial-gradient(circle at 50% 45%, black 0%, transparent 58%);
+}
+
+.mk-scan {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    180deg,
+    transparent 0 11px,
+    color-mix(in srgb, var(--primary) 7%, transparent) 11px 12px
+  );
+  animation: mk-scan 9s linear infinite;
+  opacity: 0.22;
+  mask-image: linear-gradient(to bottom, transparent, black 12%, black 88%, transparent);
+}
+
+.mk-grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+}
+
+.mk-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 40%, color-mix(in srgb, var(--background) 55%, transparent) 100%);
+  pointer-events: none;
+}
+
+@keyframes mk-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mk-aurora {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  50% { transform: translate3d(-3%, 4%, 0) scale(1.12) rotate(4deg); }
+  100% { transform: translate3d(4%, -3%, 0) scale(1.05) rotate(-3deg); }
+}
+
+@keyframes mk-drift-a {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(18%, 16%) scale(1.18); }
+}
+
+@keyframes mk-drift-b {
+  0%, 100% { transform: translate(0, 0); }
+  50% { transform: translate(-20%, 12%) scale(1.1); }
+}
+
+@keyframes mk-drift-c {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(10%, -22%) scale(1.22); }
+}
+
+@keyframes mk-scan {
+  0% { background-position: 0 -40%; }
+  100% { background-position: 0 140%; }
+}
+
+@keyframes mk-caustic {
+  0% { transform: translate3d(0, 0, 0) scale(1) rotate(0deg); }
+  100% { transform: translate3d(-4%, 3%, 0) scale(1.08) rotate(8deg); }
+}
+
+@keyframes fade-in-left {
+  from { opacity: 0; transform: translateX(-20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes fade-in-right {
+  from { opacity: 0; transform: translateX(20px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.animate-fade-in-left {
+  animation: fade-in-left 0.7s ease-out forwards;
+}
+
+.animate-fade-in-right {
+  animation: fade-in-right 0.7s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mk-prism,
+  .mk-aurora,
+  .mk-orb,
+  .mk-scan,
+  .mk-caustic,
+  .mk-iris,
+  .mk-moire,
+  .animate-fade-in-left,
+  .animate-fade-in-right,
+  .animate-ecg-line,
+  .animate-heartbeat-pulse {
+    animation: none !important;
+  }
+}
+
 /* Clean Transitions & Animations */
 @keyframes pulse-soft {
   0%, 100% { opacity: 1; }

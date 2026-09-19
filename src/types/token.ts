@@ -31,6 +31,9 @@ export type Token = {
   consultationEndTime?: string;
   notes?: string;
   symptoms?: string[];
+  severityScore?: number;
+  hospitalName?: string;
+  phone?: string;
   sharedInformation?: {
     medicalHistory: boolean;
     medications: boolean;

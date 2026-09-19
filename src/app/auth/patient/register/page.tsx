@@ -7,6 +7,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslation, languages, type LanguageCode } from "@/lib/languages";
 import { type PatientUser } from "@/types/auth";
+import { savePatientSession } from "@/lib/patientSession";
 
 type RegistrationStep = "language" | "basic" | "identification" | "consent" | "verification" | "complete";
 
@@ -104,7 +105,7 @@ export default function PatientRegister() {
     };
     
     if (typeof window !== "undefined") {
-      localStorage.setItem("currentUser", JSON.stringify(userData));
+      savePatientSession(userData);
     }
     router.push("/patient/dashboard");
   };

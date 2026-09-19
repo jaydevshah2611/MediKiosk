@@ -97,6 +97,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     return getTranslation(key, language);
   };
 
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
+
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, languages }}>
       {children}

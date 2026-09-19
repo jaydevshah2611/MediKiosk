@@ -3,9 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Smartphone, CheckCircle, AlertCircle } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { savePatientSession, listRegisteredPatients } from "@/lib/patientSession";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import type { PatientUser } from "@/types/auth";
 
 const DEMO_OTP = "123456";
 
@@ -14,10 +17,16 @@ export default function PatientLogin() {
   const { t } = useLanguage();
 
   const [phone, setPhone] = useState("");
+  const [fullName, setFullName] = useState("");
   const [otp, setOtp] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [savedPatients, setSavedPatients] = useState<PatientUser[]>([]);
+
+  useEffect(() => {
+    setSavedPatients(listRegisteredPatients());
+  }, []);
 
   const handleSendOTP = async () => {
     if (phone.length !== 10) {
@@ -45,9 +54,7 @@ export default function PatientLogin() {
     setTimeout(() => {
       setLoading(false);
       if (otp === DEMO_OTP) {
-        localStorage.setItem("authToken", "demo-patient-token");
-        localStorage.setItem("userRole", "patient");
-        localStorage.setItem("userPhone", phone);
+        savePatientSession({ phone, name: fullName.trim() || undefined });
         router.push("/patient/dashboard");
       } else {
         setMessage({ type: "error", text: `Invalid OTP. Demo mode: Use ${DEMO_OTP}` });
@@ -78,7 +85,7 @@ export default function PatientLogin() {
           <div className="font-bold text-lg text-foreground">
             {t("patient")} {t("login")}
           </div>
-          <div className="w-20" />
+          <LanguageSwitcher compact />
         </div>
       </div>
 
@@ -109,6 +116,38 @@ export default function PatientLogin() {
             <CardContent className="space-y-6">
               {!otpSent ? (
                 <div className="space-y-4">
+                  {savedPatients.length > 0 && (
+                    <div className="space-y-2">
+                      <p className="text-xs font-semibold text-muted">{t("saved_patients")}</p>
+                      <div className="flex flex-wrap gap-2">
+                        {savedPatients.map((p) => (
+                          <button
+                            key={p.id}
+                            type="button"
+                            onClick={() => {
+                              setPhone(p.phone);
+                              setFullName(p.name);
+                            }}
+                            className="text-xs px-2.5 py-1.5 rounded-lg border border-border hover:border-primary bg-background"
+                          >
+                            {t("continue_as")} {p.name} ({p.phone})
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-2">
+                      {t("your_full_name")}
+                    </label>
+                    <input
+                      type="text"
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="e.g. Aarav Sharma"
+                      className="w-full px-4 py-3 border-2 border-border rounded-lg focus:border-primary focus:outline-none bg-glass text-foreground"
+                    />
+                  </div>
                   <div>
                     <label className="block text-sm font-medium text-foreground mb-2">
                       {t("mobile_number")}

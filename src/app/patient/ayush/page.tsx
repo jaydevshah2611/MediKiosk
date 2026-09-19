@@ -219,7 +219,8 @@ function AyushConsultationContent() {
       user.name || "Patient",
       "ayurveda",
       false,
-      [`${currentSystem?.name} Assessment: ${assessment.dashavidhaPariksha.prakriti}`]
+      [`${currentSystem?.name} Assessment: ${assessment.dashavidhaPariksha.prakriti}`],
+      { severityScore: 4, hospitalName: selectedHospitalName, phone: user.phone }
     );
 
     // 2. Persist to visitManager

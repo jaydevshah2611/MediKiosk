@@ -1,10 +1,10 @@
 "use client";
 
-import { Stethoscope, User, Building2, Globe, Lock, HelpCircle, Heart, Activity, Sparkles, Sun, Moon } from "lucide-react";
+import { Stethoscope, User, Building2, Lock, Heart, Activity, Sparkles, Sun, Moon } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { type LanguageCode } from "@/lib/languages";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 
 export default function Home() {
   const router = useRouter();
@@ -96,6 +96,7 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-2 sm:gap-4">
+            <LanguageSwitcher compact />
             {/* Dark / Light Mode Toggle Button */}
             <button
               onClick={toggleTheme}
@@ -205,9 +206,9 @@ export default function Home() {
                   onClick={() => handleRoleSelect("patient")}
                   className="w-full text-left rounded-2xl p-[2px] portal-glow-card cursor-pointer group"
                 >
-                  <div className="portal-glow-inner p-4.5 flex items-center gap-4 relative overflow-hidden">
+                  <div className="portal-glow-inner p-5 flex items-center gap-4 relative overflow-hidden">
                     <div className="glow-blob bg-primary" />
-                    <div className="w-13 h-13 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-xs">
+                    <div className="w-14 h-14 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-xs">
                       <User className="w-7 h-7" />
                     </div>
                     <div className="flex-1 z-10">
@@ -227,9 +228,9 @@ export default function Home() {
                   onClick={() => handleRoleSelect("doctor")}
                   className="w-full text-left rounded-2xl p-[2px] portal-glow-card cursor-pointer group"
                 >
-                  <div className="portal-glow-inner p-4.5 flex items-center gap-4 relative overflow-hidden">
+                  <div className="portal-glow-inner p-5 flex items-center gap-4 relative overflow-hidden">
                     <div className="glow-blob bg-sky-500" />
-                    <div className="w-13 h-13 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                    <div className="w-14 h-14 rounded-xl bg-sky-500/10 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-sky-600 group-hover:text-white transition-all duration-300 shadow-xs">
                       <Stethoscope className="w-7 h-7" />
                     </div>
                     <div className="flex-1 z-10">
@@ -249,9 +250,9 @@ export default function Home() {
                   onClick={() => handleRoleSelect("hospital")}
                   className="w-full text-left rounded-2xl p-[2px] portal-glow-card cursor-pointer group"
                 >
-                  <div className="portal-glow-inner p-4.5 flex items-center gap-4 relative overflow-hidden">
+                  <div className="portal-glow-inner p-5 flex items-center gap-4 relative overflow-hidden">
                     <div className="glow-blob bg-emerald-500" />
-                    <div className="w-13 h-13 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-xs">
+                    <div className="w-14 h-14 rounded-xl bg-emerald-500/10 text-emerald-600 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300 shadow-xs">
                       <Building2 className="w-7 h-7" />
                     </div>
                     <div className="flex-1 z-10">
@@ -279,7 +280,7 @@ export default function Home() {
                       onClick={() => setLanguage(lang.code)}
                       className={`p-2.5 rounded-xl border-2 text-center transition-all cursor-pointer ${
                         language === lang.code
-                          ? "border-primary bg-primary/10 text-primary font-bold shadow-xs scale-102"
+                          ? "border-primary bg-primary/10 text-primary font-bold shadow-xs scale-[1.02]"
                           : "border-border hover:border-primary/40 bg-surface text-foreground"
                       }`}
                     >

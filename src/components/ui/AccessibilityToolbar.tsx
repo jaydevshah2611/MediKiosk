@@ -17,9 +17,10 @@ import {
   Sun,
   Moon
 } from "lucide-react";
-import { languages, type LanguageCode } from "@/lib/languages";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 export function AccessibilityToolbar() {
+  const { language, setLanguage, languages: langList, t } = useLanguage();
   const [isOpen, setIsOpen] = useState(false);
   const [themeMode, setThemeMode] = useState<"light" | "dark">("light");
   const [highContrast, setHighContrast] = useState(false);
@@ -140,6 +141,26 @@ export function AccessibilityToolbar() {
           </div>
 
           <div className="space-y-3 text-xs">
+            <div className="p-3 rounded-xl bg-background border border-border space-y-2">
+              <div className="font-bold text-foreground">{t("select_language")}</div>
+              <div className="grid grid-cols-3 gap-1.5">
+                {langList.map((lang) => (
+                  <button
+                    key={lang.code}
+                    type="button"
+                    onClick={() => setLanguage(lang.code)}
+                    className={`py-1.5 px-1 rounded-lg border text-[10px] font-semibold cursor-pointer ${
+                      language === lang.code
+                        ? "bg-primary text-white border-primary"
+                        : "bg-surface text-foreground border-border hover:border-primary/50"
+                    }`}
+                  >
+                    {lang.native}
+                  </button>
+                ))}
+              </div>
+            </div>
+
             {/* Dark Mode vs White/Light Mode Toggle */}
             <div className="p-3 rounded-xl bg-background border border-border space-y-2">
               <div className="flex items-center justify-between">

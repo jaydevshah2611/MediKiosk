@@ -267,33 +267,38 @@ export class TokenManager {
     patientName: string,
     department: Department,
     priority: boolean = false,
-    symptoms?: string[]
+    symptoms?: string[],
+    extras?: { severityScore?: number; hospitalName?: string; phone?: string }
   ): Token {
     const queue = this.getDepartmentQueue(department);
     const sequence = queue.tokens.length + 1;
     const tokenNumber = this.generateTokenNumber(department, sequence);
+    const severityScore = extras?.severityScore ?? (priority ? 8 : 4);
 
     const token: Token = {
-      id: `token-${Date.now()}`,
+      id: `token-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
       tokenNumber,
       patientId,
       patientName,
       department,
-      status: priority ? "priority" : "waiting",
-      priority,
+      status: priority || severityScore >= 8 ? "priority" : "waiting",
+      priority: priority || severityScore >= 8,
       issuedAt: new Date().toISOString(),
       estimatedWaitTime: this.calculateEstimatedWaitTime(queue),
       symptoms,
+      severityScore,
+      hospitalName: extras?.hospitalName,
+      phone: extras?.phone,
     };
 
-    // Priority tokens go to the front
-    if (priority) {
+    if (token.priority) {
       queue.tokens.unshift(token);
     } else {
       queue.tokens.push(token);
     }
 
     this.saveDepartmentQueue(queue);
+    void import("./liveClient").then((m) => m.upsertLive({ tokens: [token] })).catch(() => {});
     return token;
   }
 
@@ -321,11 +326,35 @@ export class TokenManager {
         }
 
         this.saveDepartmentQueue(queue);
+        void import("./liveClient").then((m) => m.patchLiveTokenStatus(tokenId, status)).catch(() => {});
         return token;
       }
     }
 
     return null;
+  }
+
+  getAllTokens(): Token[] {
+    const list: Token[] = [];
+    for (const dept of departments) {
+      list.push(...this.getDepartmentQueue(dept.id).tokens);
+    }
+    return list;
+  }
+
+  upsertTokens(tokens: Token[]): void {
+    for (const token of tokens) {
+      const dept = token.department || "general_medicine";
+      const queue = this.getDepartmentQueue(dept);
+      const normalized = { ...token, department: dept };
+      const idx = queue.tokens.findIndex((t) => t.id === token.id);
+      if (idx >= 0) {
+        queue.tokens[idx] = { ...queue.tokens[idx], ...normalized };
+      } else {
+        queue.tokens.push(normalized);
+      }
+      this.saveDepartmentQueue(queue);
+    }
   }
 
   deleteToken(tokenId: string): boolean {

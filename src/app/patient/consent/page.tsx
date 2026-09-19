@@ -34,7 +34,12 @@ export default function PatientConsent() {
           setPendingRequests(consentRecord.sharingRequests.filter(r => r.status === "pending"));
         }
       } else {
-        router.push("/patient/dashboard");
+        setUser({
+          id: "guest",
+          role: "patient",
+          name: "Visitor",
+          phone: "",
+        });
       }
     }
   }, [router]);
@@ -122,14 +127,14 @@ export default function PatientConsent() {
       <div className="bg-surface border-b border-border">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <button
-            onClick={() => router.push("/patient/dashboard")}
+            onClick={() => router.push(user.id === "guest" ? "/" : "/patient/dashboard")}
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to Dashboard</span>
+            <span className="text-sm">{user.id === "guest" ? "Back to Home" : "Back to Dashboard"}</span>
           </button>
           <div className="font-bold text-lg text-foreground">
-            My Health Sharing
+            {user.id === "guest" ? "Privacy & Consent" : "My Health Sharing"}
           </div>
           <div className="w-32" />
         </div>
@@ -138,6 +143,18 @@ export default function PatientConsent() {
       {/* Main Content */}
       <div className="flex-1 p-4">
         <div className="max-w-4xl mx-auto space-y-6">
+          {user.id === "guest" && (
+            <Card className="border-2 border-primary/20">
+              <CardHeader>
+                <CardTitle className="text-lg">How MediKiosk uses your data</CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-2 text-sm text-muted">
+                <p>We collect only what you provide at the kiosk or in the patient portal: identity, symptoms, uploaded reports, and consent choices.</p>
+                <p>Sharing with a hospital or doctor happens only after you grant permission. You can revoke access at any time after you sign in.</p>
+                <p>This demo stores data locally in your browser. No production medical records are sent to a server.</p>
+              </CardContent>
+            </Card>
+          )}
           {/* Pending Requests */}
           {pendingRequests.length > 0 && (
             <div>

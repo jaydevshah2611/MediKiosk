@@ -6,10 +6,13 @@ import { ProgressStepper } from "@/components/kiosk/ProgressStepper";
 import { ArrowRight, Globe, Smartphone, Mic } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useLanguage } from "@/contexts/LanguageContext";
+import { type LanguageCode } from "@/lib/languages";
 
 const languages = [
   { code: "en", name: "English", native: "English" },
   { code: "hi", name: "Hindi", native: "हिंदी" },
+  { code: "gu", name: "Gujarati", native: "ગુજરાતી" },
   { code: "ta", name: "Tamil", native: "தமிழ்" },
   { code: "te", name: "Telugu", native: "తెలుగు" },
   { code: "kn", name: "Kannada", native: "ಕನ್ನಡ" },
@@ -20,7 +23,8 @@ const languages = [
 
 export default function KioskWelcome() {
   const router = useRouter();
-  const [selectedLanguage, setSelectedLanguage] = useState("en");
+  const { language, setLanguage } = useLanguage();
+  const [selectedLanguage, setSelectedLanguage] = useState(language);
   const [entryMethod, setEntryMethod] = useState<"kiosk" | "mobile">("kiosk");
 
   const steps = [
@@ -33,7 +37,10 @@ export default function KioskWelcome() {
   ];
 
   const handleContinue = () => {
-    // Store language preference and proceed to consent
+    setLanguage(selectedLanguage as LanguageCode);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("kiosk_entry_method", entryMethod);
+    }
     router.push("/kiosk/consent");
   };
 
@@ -88,7 +95,10 @@ export default function KioskWelcome() {
                 {languages.map((lang) => (
                   <button
                     key={lang.code}
-                    onClick={() => setSelectedLanguage(lang.code)}
+                    onClick={() => {
+                      setSelectedLanguage(lang.code as LanguageCode);
+                      setLanguage(lang.code as LanguageCode);
+                    }}
                     className={`p-4 rounded-xl border-2 transition-all ${
                       selectedLanguage === lang.code
                         ? "border-primary bg-primary/10"

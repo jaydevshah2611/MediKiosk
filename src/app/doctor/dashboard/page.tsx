@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -47,19 +47,21 @@ import {
   ExternalLink,
   Info
 } from "lucide-react";
-import { useTranslation, type LanguageCode } from "@/lib/languages";
+import { useLanguage } from "@/contexts/LanguageContext";
 import { VisitManager, type PatientVisitRecord } from "@/lib/visitManager";
 import { TokenManager } from "@/lib/tokenManager";
 import { type Department } from "@/types/token";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
+import { SignLanguageAvatar } from "@/components/patient/SignLanguageAvatar";
+import { syncLiveFromServer, sortVisitsBySeverity, maxVisitSeverity } from "@/lib/liveClient";
 
 const visitManager = new VisitManager();
 const tokenManager = new TokenManager();
 
 export default function DoctorDashboard() {
   const router = useRouter();
+  const { t, setLanguage } = useLanguage();
   const [user, setUser] = useState<any>(null);
-  const [selectedLanguage, setSelectedLanguage] = useState<LanguageCode>("en");
-  const { t } = useTranslation(selectedLanguage);
 
   // Exact 5 Tabs as requested
   const [activeTab, setActiveTab] = useState<"dashboard" | "patients" | "schedule" | "profile" | "settings">("dashboard");
@@ -91,6 +93,8 @@ export default function DoctorDashboard() {
   const [selectedScheduleDay, setSelectedScheduleDay] = useState("Today");
 
   // Load and hydrate doctor data
+  const langReady = useRef(false);
+
   const loadData = () => {
     if (typeof window === "undefined") return;
     const userData = localStorage.getItem("currentUser");
@@ -101,11 +105,15 @@ export default function DoctorDashboard() {
         return;
       }
       setUser(parsedUser);
-      setSelectedLanguage(parsedUser.preferredLanguage || "en");
+      if (!langReady.current && parsedUser.preferredLanguage) {
+        setLanguage(parsedUser.preferredLanguage);
+        langReady.current = true;
+      }
 
-      // Fetch all visits (sanitize any legacy hardcoded placeholder names if present)
-      const allVisits = visitManager.getVisits().map(v => ({
+      const allVisits = visitManager.getVisits().map((v) => ({
         ...v,
+        symptoms: v.symptoms || [],
+        priorityFlags: v.priorityFlags || [],
         patientName: v.patientName === "Jaydev" ? (v.id === "visit-101" ? "Aarav Sharma" : "Priya Patel") : v.patientName
       }));
       setVisits(allVisits);
@@ -116,6 +124,10 @@ export default function DoctorDashboard() {
 
   useEffect(() => {
     loadData();
+    const timer = setInterval(() => {
+      syncLiveFromServer().then(() => loadData()).catch(() => {});
+    }, 4000);
+    return () => clearInterval(timer);
   }, [router]);
 
   // When a visit is selected for review or consultation, initialize the form
@@ -182,34 +194,35 @@ export default function DoctorDashboard() {
 
   // Filtered visits
   const filteredVisits = useMemo(() => {
-    return visits.filter(v => {
+    const list = visits.filter(v => {
       const matchesDept = selectedDepartmentFilter === "all" || v.department.toLowerCase().includes(selectedDepartmentFilter.toLowerCase());
       const matchesStatus = selectedStatusFilter === "all" || v.status === selectedStatusFilter;
       const q = searchQuery.toLowerCase().trim();
       const matchesQuery = !q ||
         v.patientName.toLowerCase().includes(q) ||
         (v.tokenNumber && v.tokenNumber.toLowerCase().includes(q)) ||
-        v.symptoms.some(s => s.name.toLowerCase().includes(q)) ||
+        (v.symptoms || []).some(s => s.name.toLowerCase().includes(q)) ||
         (v.diagnosisNotes && v.diagnosisNotes.toLowerCase().includes(q));
       return matchesDept && matchesStatus && matchesQuery;
     });
+    return sortVisitsBySeverity(list);
   }, [visits, selectedDepartmentFilter, selectedStatusFilter, searchQuery]);
 
   // Real-time metrics
   const waitingCount = visits.filter(v => v.status === "in_progress" || v.status === "scheduled").length;
   const completedCount = visits.filter(v => v.status === "completed").length;
-  const priorityCount = visits.filter(v => (v.priorityFlags && v.priorityFlags.length > 0) || v.symptoms.some(s => (s.severity || 0) >= 8)).length;
+  const priorityCount = visits.filter(v => (v.priorityFlags && v.priorityFlags.length > 0) || (v.symptoms || []).some(s => (s.severity || 0) >= 8)).length;
 
   if (!user) {
     return <div className="min-h-screen flex items-center justify-center font-bold text-foreground">Loading Clinical Station...</div>;
   }
 
   const TABS = [
-    { id: "dashboard", label: "Dashboard", icon: LayoutDashboard, badge: waitingCount },
-    { id: "patients", label: "Patients", icon: Users, badge: visits.length },
-    { id: "schedule", label: "Schedule", icon: CalendarDays },
-    { id: "profile", label: "Profile", icon: Award },
-    { id: "settings", label: "Settings", icon: SettingsIcon },
+    { id: "dashboard", label: t("tab_dashboard"), icon: LayoutDashboard, badge: waitingCount },
+    { id: "patients", label: t("tab_patients"), icon: Users, badge: visits.length },
+    { id: "schedule", label: t("tab_schedule"), icon: CalendarDays },
+    { id: "profile", label: t("nav_profile"), icon: Award },
+    { id: "settings", label: t("nav_settings"), icon: SettingsIcon },
   ];
 
   return (
@@ -273,13 +286,15 @@ export default function DoctorDashboard() {
               <ShieldCheck className="w-3.5 h-3.5" /> NMC Active Station
             </div>
 
+            <LanguageSwitcher compact />
+
             <button
               onClick={loadData}
               className="p-2 rounded-xl bg-background border border-border text-muted hover:text-foreground hover:border-primary transition-all text-xs flex items-center gap-1.5"
-              title="Refresh Queue"
+              title={t("refresh_queue")}
             >
               <RefreshCw className="w-3.5 h-3.5" />
-              <span className="hidden lg:inline">Refresh</span>
+              <span className="hidden lg:inline">{t("refresh_queue")}</span>
             </button>
 
             <button
@@ -287,7 +302,7 @@ export default function DoctorDashboard() {
               className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-border text-xs font-semibold text-muted hover:text-destructive hover:border-destructive/40 transition-colors"
             >
               <LogOut className="w-3.5 h-3.5" />
-              <span>Logout</span>
+              <span>{t("logout")}</span>
             </button>
           </div>
         </div>
@@ -438,7 +453,7 @@ export default function DoctorDashboard() {
                 ) : (
                   filteredVisits.map((visit) => {
                     const isSelected = selectedVisit?.id === visit.id;
-                    const isPriority = (visit.priorityFlags && visit.priorityFlags.length > 0) || visit.symptoms.some(s => (s.severity || 0) >= 8);
+                    const isPriority = (visit.priorityFlags && visit.priorityFlags.length > 0) || (visit.symptoms || []).some(s => (s.severity || 0) >= 8);
                     const isCompleted = visit.status === "completed";
 
                     return (
@@ -469,11 +484,17 @@ export default function DoctorDashboard() {
                             </div>
 
                             <div>
-                              <div className="font-bold text-foreground text-sm flex items-center gap-2">
+                              <div className="font-bold text-foreground text-sm flex items-center gap-2 flex-wrap">
                                 <span>{visit.patientName}</span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                                  {t("patient_arriving")}
+                                </span>
+                                <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-amber-500/10 text-amber-700 border border-amber-500/30">
+                                  {t("severity")} {maxVisitSeverity(visit)}/10
+                                </span>
                                 {isPriority && (
                                   <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-600 text-white animate-pulse">
-                                    🚨 RED FLAG
+                                    {t("high_priority")}
                                   </span>
                                 )}
                               </div>
@@ -498,7 +519,7 @@ export default function DoctorDashboard() {
 
                         {/* Symptoms pills */}
                         <div className="mt-3 flex flex-wrap gap-1.5">
-                          {visit.symptoms.map((s, idx) => (
+                          {(visit.symptoms || []).map((s, idx) => (
                             <span
                               key={idx}
                               className={`text-[11px] px-2 py-0.5 rounded-md font-medium ${
@@ -547,6 +568,15 @@ export default function DoctorDashboard() {
                       </div>
                     )}
 
+                    <SignLanguageAvatar
+                      currentText={
+                        (selectedVisit.symptoms || []).length
+                          ? `Doctor consult. ${selectedVisit.patientName}. ${(selectedVisit.symptoms || []).map((s) => s.name).join(", ")}. ${(selectedVisit.priorityFlags || []).length ? "Urgent emergency." : "Wait. Confirm medicine."}`
+                          : "Doctor consult. Confirm medicine. Wait."
+                      }
+                      stepName="follow_up"
+                    />
+
                     {/* Vitals & Triage Summary */}
                     <div>
                       <label className="block text-xs font-bold text-foreground uppercase tracking-wider mb-2 flex items-center gap-1">
@@ -578,7 +608,7 @@ export default function DoctorDashboard() {
                         <Activity className="w-3.5 h-3.5 text-primary" /> Logged Chief Complaints & Answers
                       </label>
                       <div className="space-y-2">
-                        {selectedVisit.symptoms.map((s, idx) => (
+                        {(selectedVisit.symptoms || []).map((s, idx) => (
                           <div key={idx} className="p-2.5 rounded-xl bg-background border border-border text-xs">
                             <div className="font-bold text-foreground flex items-center justify-between">
                               <span>• {s.name}</span>

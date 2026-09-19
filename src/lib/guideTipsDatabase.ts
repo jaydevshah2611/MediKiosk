@@ -629,7 +629,8 @@ export const MULTILINGUAL_PAGE_TIPS: Record<string, TranslatedGuideTip[]> = {
 };
 
 export function getLocalizedGuideTips(pathname: string, lang: LanguageCode) {
-  const list = MULTILINGUAL_PAGE_TIPS[pathname] || MULTILINGUAL_PAGE_TIPS["/patient/dashboard"] || [];
+  const list = MULTILINGUAL_PAGE_TIPS[pathname];
+  if (!list) return null;
   return list.map(item => ({
     id: item.id,
     badge: item.badge[lang] || item.badge.en,

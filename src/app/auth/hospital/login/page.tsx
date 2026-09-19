@@ -17,6 +17,7 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { LanguageSwitcher } from "@/components/ui/LanguageSwitcher";
 import { allIndiaHospitals } from "@/lib/hospitalsDatabase";
 
 export default function HospitalLogin() {
@@ -106,9 +107,7 @@ export default function HospitalLogin() {
             <Building2 className="w-5 h-5 text-primary" />
             <span>National ABDM Hospital & OPD Node Gateway</span>
           </div>
-          <div className="text-xs text-muted font-mono hidden sm:block">
-            Govt. Health Portal Node
-          </div>
+          <LanguageSwitcher compact />
         </div>
       </div>
 

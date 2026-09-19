@@ -33,6 +33,69 @@ interface GuideTip {
 
 // Comprehensive contextual guide tips for every major portal page
 const PAGE_TIPS: Record<string, GuideTip[]> = {
+    "/auth/patient/login": [
+    {
+      id: "login_1",
+      badge: "Step 1: Mobile OTP",
+      title: "Sign in with your phone",
+      description: "Enter a 10-digit mobile number, tap Send OTP, then use demo OTP 123456 to open the patient portal.",
+      icon: "📱"
+    },
+    {
+      id: "login_2",
+      badge: "Step 2: New here?",
+      title: "Create an account",
+      description: "Use Create Account if you have not registered yet. Your profile is saved on this device for later visits.",
+      actionText: "Create Account",
+      actionHref: "/auth/patient/register",
+      icon: "✨"
+    }
+  ],
+  "/auth/patient/register": [
+    {
+      id: "reg_1",
+      badge: "Step 1: Complete the form",
+      title: "Register in a few screens",
+      description: "Choose a language, add basic details, then verify with the demo OTP so your dashboard can load.",
+      icon: "📝"
+    }
+  ],
+  "/auth/doctor/login": [
+    {
+      id: "dlogin_1",
+      badge: "Step 1: Clinical login",
+      title: "Use a preset doctor profile",
+      description: "Pick a demo clinician and sign in. Credentials are prefilled for hackathon demonstration.",
+      icon: "🩺"
+    }
+  ],
+  "/auth/hospital/login": [
+    {
+      id: "hlogin_1",
+      badge: "Step 1: Hospital node",
+      title: "Select a hospital and continue",
+      description: "Choose a facility from the list, then sign in with the prefilled admin credentials to open operations.",
+      icon: "🏥"
+    }
+  ],
+  "/kiosk/welcome": [
+    {
+      id: "kw_1",
+      badge: "Step 1: Language",
+      title: "Pick a language, then continue",
+      description: "Select your preferred language and kiosk or mobile mode, then tap Continue to grant consent.",
+      icon: "🌐"
+    }
+  ],
+  "/kiosk/consent": [
+    {
+      id: "kc_1",
+      badge: "Step 1: Consent",
+      title: "Grant all consents to proceed",
+      description: "Enable voice, document scan, and HIS sharing checkboxes. Continue stays disabled until all three are granted.",
+      icon: "✅"
+    }
+  ],
   "/": [
     {
       id: "landing_1",
@@ -313,12 +376,17 @@ export function StepGuideTips() {
   const { language } = useLanguage();
 
   const [currentTipIndex, setCurrentTipIndex] = useState(0);
-  const [isMinimized, setIsMinimized] = useState(false);
+  const [isMinimized, setIsMinimized] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
   const [speaking, setSpeaking] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   // Match tips for the current path or fallback to empty
-  const currentTips = getLocalizedGuideTips(pathname, language) || PAGE_TIPS[pathname] || PAGE_TIPS["/patient/dashboard"] || [];
+  const currentTips = getLocalizedGuideTips(pathname, language) || PAGE_TIPS[pathname] || [];
 
   // Reset index on page change
   useEffect(() => {
@@ -326,7 +394,7 @@ export function StepGuideTips() {
     setIsVisible(true);
   }, [pathname]);
 
-  if (!isVisible || currentTips.length === 0) return null;
+  if (!mounted || !isVisible || currentTips.length === 0) return null;
 
   const activeTip = currentTips[currentTipIndex];
 
