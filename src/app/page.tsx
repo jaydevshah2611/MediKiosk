@@ -100,18 +100,18 @@ export default function Home() {
             {/* Dark / Light Mode Toggle Button */}
             <button
               onClick={toggleTheme}
-              aria-label={isDark ? "Switch to Light Mode" : "Switch to Dark Mode"}
+              aria-label={isDark ? t("light_mode") : t("dark_mode")}
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-background text-foreground text-xs font-semibold hover:border-primary transition-all cursor-pointer shadow-xs"
             >
               {isDark ? (
                 <>
                   <Sun className="w-4 h-4 text-amber-400" />
-                  <span className="hidden sm:inline">Light Mode</span>
+                  <span className="hidden sm:inline">{t("light_mode")}</span>
                 </>
               ) : (
                 <>
                   <Moon className="w-4 h-4 text-sky-600" />
-                  <span className="hidden sm:inline">Dark Mode</span>
+                  <span className="hidden sm:inline">{t("dark_mode")}</span>
                 </>
               )}
             </button>
@@ -121,14 +121,14 @@ export default function Home() {
               className="flex items-center gap-1.5 text-muted hover:text-foreground transition-colors text-xs font-medium px-2.5 py-1.5 rounded-md hover:bg-muted/20"
             >
               <Lock className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Privacy</span>
+              <span className="hidden sm:inline">{t("privacy")}</span>
             </button>
 
             <button
               onClick={() => router.push("/kiosk/welcome")}
               className="flex items-center gap-1.5 bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 transition-all text-xs font-semibold px-3 py-1.5 rounded-lg"
             >
-              <span>Kiosk Mode</span>
+              <span>{t("kiosk_mode")}</span>
             </button>
           </div>
         </div>
@@ -178,15 +178,15 @@ export default function Home() {
               <div className="flex flex-wrap gap-5 text-xs text-muted font-medium pt-1">
                 <div className="flex items-center gap-1.5">
                   <Heart className="w-4 h-4 text-rose-500" />
-                  <span>Consent-Driven Care</span>
+                  <span>{t("consent_driven_care")}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Activity className="w-4 h-4 text-emerald-500" />
-                  <span>9 Regional Languages</span>
+                  <span>{t("nine_regional_languages")}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Lock className="w-4 h-4 text-primary" />
-                  <span>AYUSH & Allopathic Triage</span>
+                  <span>{t("ayush_allopathic_triage")}</span>
                 </div>
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function Home() {
                 <h2 className="text-xl font-bold text-foreground mb-1">
                   {t("who_are_you")}
                 </h2>
-                <p className="text-xs text-muted">Select your portal to continue</p>
+                <p className="text-xs text-muted">{t("select_portal")}</p>
               </div>
 
               <div className="space-y-3.5">
@@ -213,8 +213,8 @@ export default function Home() {
                     </div>
                     <div className="flex-1 z-10">
                       <div className="font-bold text-foreground text-base group-hover:text-primary transition-colors flex items-center justify-between">
-                        <span>{t("patient")} Portal</span>
-                        <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold">Enter →</span>
+                        <span>{t("patient_portal")}</span>
+                        <span className="text-xs text-primary opacity-0 group-hover:opacity-100 transition-opacity font-bold">{t("enter")}</span>
                       </div>
                       <div className="text-xs text-muted mt-0.5">
                         {t("patient_description")}
@@ -235,8 +235,8 @@ export default function Home() {
                     </div>
                     <div className="flex-1 z-10">
                       <div className="font-bold text-foreground text-base group-hover:text-sky-600 transition-colors flex items-center justify-between">
-                        <span>{t("doctor")} Portal</span>
-                        <span className="text-xs text-sky-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">Enter →</span>
+                        <span>{t("doctor_portal")}</span>
+                        <span className="text-xs text-sky-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">{t("enter")}</span>
                       </div>
                       <div className="text-xs text-muted mt-0.5">
                         {t("doctor_description")}
@@ -257,8 +257,8 @@ export default function Home() {
                     </div>
                     <div className="flex-1 z-10">
                       <div className="font-bold text-foreground text-base group-hover:text-emerald-600 transition-colors flex items-center justify-between">
-                        <span>{t("hospital")} Operations</span>
-                        <span className="text-xs text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">Enter →</span>
+                        <span>{t("hospital_operations")}</span>
+                        <span className="text-xs text-emerald-600 opacity-0 group-hover:opacity-100 transition-opacity font-bold">{t("enter")}</span>
                       </div>
                       <div className="text-xs text-muted mt-0.5">
                         {t("hospital_description")}

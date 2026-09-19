@@ -214,7 +214,7 @@ export default function DoctorDashboard() {
   const priorityCount = visits.filter(v => (v.priorityFlags && v.priorityFlags.length > 0) || (v.symptoms || []).some(s => (s.severity || 0) >= 8)).length;
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center font-bold text-foreground">Loading Clinical Station...</div>;
+    return <div className="min-h-screen flex items-center justify-center font-bold text-foreground">{t("loading_clinical")}</div>;
   }
 
   const TABS = [
@@ -283,7 +283,7 @@ export default function DoctorDashboard() {
             </div>
 
             <div className="px-3 py-1 rounded-full text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
-              <ShieldCheck className="w-3.5 h-3.5" /> NMC Active Station
+              <ShieldCheck className="w-3.5 h-3.5" /> {t("nmc_active_station")}
             </div>
 
             <LanguageSwitcher compact />
@@ -350,7 +350,7 @@ export default function DoctorDashboard() {
               <div className="glow-blob bg-teal-500" />
               <div className="z-10">
                 <div className="text-2xl sm:text-3xl font-black text-primary">{waitingCount}</div>
-                <div className="text-xs font-semibold text-muted mt-0.5">Patients in Active Queue</div>
+                <div className="text-xs font-semibold text-muted mt-0.5">{t("queue_patients")}</div>
               </div>
               <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform z-10">
                 <Clock className="w-5 h-5" />
@@ -363,7 +363,7 @@ export default function DoctorDashboard() {
               <div className="glow-blob bg-emerald-500" />
               <div className="z-10">
                 <div className="text-2xl sm:text-3xl font-black text-emerald-600">{completedCount}</div>
-                <div className="text-xs font-semibold text-muted mt-0.5">Completed Today</div>
+                <div className="text-xs font-semibold text-muted mt-0.5">{t("completed_today")}</div>
               </div>
               <div className="w-11 h-11 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-600 group-hover:scale-110 transition-transform z-10">
                 <CheckCircle className="w-5 h-5" />
@@ -376,7 +376,7 @@ export default function DoctorDashboard() {
               <div className="glow-blob bg-rose-500" />
               <div className="z-10">
                 <div className="text-2xl sm:text-3xl font-black text-rose-600">{priorityCount}</div>
-                <div className="text-xs font-semibold text-muted mt-0.5">Priority / Red Flags</div>
+                <div className="text-xs font-semibold text-muted mt-0.5">{t("priority_red_flags")}</div>
               </div>
               <div className="w-11 h-11 rounded-xl bg-rose-500/10 flex items-center justify-center text-rose-600 group-hover:scale-110 transition-transform z-10">
                 <AlertCircle className="w-5 h-5" />
@@ -389,7 +389,7 @@ export default function DoctorDashboard() {
               <div className="glow-blob bg-sky-500" />
               <div className="z-10">
                 <div className="text-2xl sm:text-3xl font-black text-foreground">{consultDuration}m</div>
-                <div className="text-xs font-semibold text-muted mt-0.5">Avg. Target Consultation</div>
+                <div className="text-xs font-semibold text-muted mt-0.5">{t("avg_consultation")}</div>
               </div>
               <div className="w-11 h-11 rounded-xl bg-sky-500/10 flex items-center justify-center text-sky-600 group-hover:scale-110 transition-transform z-10">
                 <Activity className="w-5 h-5" />
@@ -422,10 +422,10 @@ export default function DoctorDashboard() {
                     onChange={(e) => setSelectedStatusFilter(e.target.value)}
                     className="px-3 py-2 text-xs font-semibold rounded-xl border border-border bg-background text-foreground focus:outline-none focus:border-primary"
                   >
-                    <option value="all">All Statuses</option>
-                    <option value="in_progress">Waiting / In-Progress</option>
-                    <option value="scheduled">Scheduled</option>
-                    <option value="completed">Completed</option>
+                    <option value="all">{t("all_statuses")}</option>
+                    <option value="in_progress">{t("waiting_in_progress")}</option>
+                    <option value="scheduled">{t("scheduled")}</option>
+                    <option value="completed">{t("completed")}</option>
                   </select>
 
                   <select
@@ -433,7 +433,7 @@ export default function DoctorDashboard() {
                     onChange={(e) => setSelectedDepartmentFilter(e.target.value)}
                     className="px-3 py-2 text-xs font-semibold rounded-xl border border-border bg-background text-foreground focus:outline-none focus:border-primary"
                   >
-                    <option value="all">All Specialties</option>
+                    <option value="all">{t("all_specialties")}</option>
                     <option value="general">General Medicine</option>
                     <option value="cardio">Cardiology</option>
                     <option value="pediatric">Pediatrics</option>
@@ -447,7 +447,7 @@ export default function DoctorDashboard() {
                 {filteredVisits.length === 0 ? (
                   <Card className="border border-border bg-surface p-8 text-center">
                     <Users className="w-12 h-12 text-muted mx-auto mb-2" />
-                    <div className="font-bold text-foreground">No patients match the search filter</div>
+                    <div className="font-bold text-foreground">{t("no_patients_match")}</div>
                     <div className="text-xs text-muted mt-1">Try clearing your filters or refreshing the live OPD queue.</div>
                   </Card>
                 ) : (

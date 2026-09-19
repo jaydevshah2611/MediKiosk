@@ -101,11 +101,11 @@ export default function HospitalLogin() {
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t("back")} to Home</span>
+            <span>{t("back_to_home")}</span>
           </button>
           <div className="font-bold text-base text-foreground flex items-center gap-2">
             <Building2 className="w-5 h-5 text-primary" />
-            <span>National ABDM Hospital & OPD Node Gateway</span>
+            <span>{t("hospital_node_gateway")}</span>
           </div>
           <LanguageSwitcher compact />
         </div>
@@ -130,7 +130,7 @@ export default function HospitalLogin() {
                 <Hospital className="w-7 h-7" />
               </div>
               <CardTitle className="text-2xl font-black text-foreground">
-                Hospital Node & OPD Login
+                {t("hospital_opd_login")}
               </CardTitle>
               <p className="text-xs text-muted max-w-sm mx-auto">
                 Secure institutional authentication for Hospital Administrators, OPD In-charges, and Nodal Triage Officers.

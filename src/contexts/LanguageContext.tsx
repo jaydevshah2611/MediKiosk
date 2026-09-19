@@ -6,7 +6,7 @@ import { languages, translations, getTranslation, type LanguageCode } from "@/li
 interface LanguageContextType {
   language: LanguageCode;
   setLanguage: (lang: LanguageCode) => void;
-  t: (key: string) => string;
+  t: (key: string, vars?: Record<string, string | number>) => string;
   languages: typeof languages;
 }
 
@@ -93,8 +93,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
-  const t = (key: string): string => {
-    return getTranslation(key, language);
+  const t = (key: string, vars?: Record<string, string | number>): string => {
+    return getTranslation(key, language, vars);
   };
 
   useEffect(() => {

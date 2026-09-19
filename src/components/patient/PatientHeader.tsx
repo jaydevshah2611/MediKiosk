@@ -31,13 +31,13 @@ export function PatientHeader({ user, selectedLanguage }: PatientHeaderProps) {
             </div>
             <div>
               <div className="font-bold text-foreground text-sm sm:text-base flex items-center gap-1.5">
-                <span>{user?.name || "Patient"}</span>
+                <span>{user?.name || t("patient")}</span>
                 <span className="text-[10px] px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300 font-semibold flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3" /> ABHA Linked
+                  <ShieldCheck className="w-3 h-3" /> {t("abha_linked")}
                 </span>
               </div>
               <div className="text-xs text-muted flex items-center gap-1.5">
-                <span>MediKiosk Health Portal</span>
+                <span>{t("health_portal")}</span>
                 <div className="hidden sm:flex items-center w-16 h-3 overflow-hidden relative">
                   <svg
                     className="w-full h-full text-primary"
@@ -67,7 +67,7 @@ export function PatientHeader({ user, selectedLanguage }: PatientHeaderProps) {
               value={language}
               onChange={(e) => setLanguage(e.target.value as LanguageCode)}
               className="bg-transparent text-xs font-semibold text-foreground focus:outline-none cursor-pointer"
-              title="Change Portal Language"
+              title={t("change_language")}
             >
               {languages.map((l) => (
                 <option key={l.code} value={l.code}>

@@ -120,7 +120,7 @@ export default function PatientRegister() {
                 {t("select_language")}
               </h2>
               <p className="text-sm text-muted text-center">
-                This will be your default portal language
+                {t("select_language")}
               </p>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -376,7 +376,7 @@ export default function PatientRegister() {
               </div>
             </div>
             <Button onClick={handleComplete} className="w-full bg-primary">
-              Go to Patient Portal
+              {t("patient_portal")}
             </Button>
           </div>
         );

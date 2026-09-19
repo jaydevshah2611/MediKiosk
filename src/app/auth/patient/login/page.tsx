@@ -83,7 +83,7 @@ export default function PatientLogin() {
             <span className="text-sm">{t("back")}</span>
           </button>
           <div className="font-bold text-lg text-foreground">
-            {t("patient")} {t("login")}
+            {t("patient_login")}
           </div>
           <LanguageSwitcher compact />
         </div>
@@ -171,7 +171,7 @@ export default function PatientLogin() {
                     disabled={loading || phone.length !== 10}
                     className="w-full bg-primary hover:bg-primary-dark"
                   >
-                    {loading ? "Sending..." : t("send_otp")}
+                    {loading ? t("sending") : t("send_otp")}
                   </Button>
                 </div>
               ) : (
@@ -189,7 +189,7 @@ export default function PatientLogin() {
                       maxLength={6}
                     />
                     <p className="text-sm text-muted mt-2 text-center">
-                      OTP sent to +91 {phone}
+                      {t("otp_sent_to")} +91 {phone}
                     </p>
                   </div>
                   <Button
@@ -197,14 +197,14 @@ export default function PatientLogin() {
                     disabled={loading || otp.length !== 6}
                     className="w-full bg-primary hover:bg-primary-dark"
                   >
-                    {loading ? "Verifying..." : t("verify_otp")}
+                    {loading ? t("verifying") : t("verify_otp")}
                   </Button>
                   <div className="flex items-center justify-between">
                     <button
                       onClick={() => { setOtpSent(false); setOtp(""); setMessage(null); }}
                       className="text-sm text-muted hover:text-foreground transition-colors"
                     >
-                      Change number
+                      {t("change_number")}
                     </button>
                     <button
                       onClick={handleResendOTP}

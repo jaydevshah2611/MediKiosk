@@ -146,11 +146,11 @@ export default function DoctorLogin() {
             className="flex items-center gap-2 text-muted hover:text-foreground transition-colors text-sm font-medium"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t("back")} to Home</span>
+            <span>{t("back_to_home")}</span>
           </button>
           <div className="font-bold text-base text-foreground flex items-center gap-2">
             <Stethoscope className="w-5 h-5 text-primary" />
-            <span>NMC / ABDM Doctor Clinical Portal</span>
+            <span>{t("doctor_clinical_portal")}</span>
           </div>
           <LanguageSwitcher compact />
         </div>
@@ -175,7 +175,7 @@ export default function DoctorLogin() {
                 <Stethoscope className="w-7 h-7" />
               </div>
               <CardTitle className="text-2xl font-black text-foreground">
-                Physician & Specialist Portal Login
+                {t("physician_portal_login")}
               </CardTitle>
               <p className="text-xs text-muted max-w-sm mx-auto">
                 Access your OPD queue, AI triage consults, and e-prescription desk using your Verified National Medical License (NMC/State Council).

@@ -115,7 +115,7 @@ export function AccessibilityToolbar() {
           <div className="w-6 h-6 rounded-full bg-white/20 flex items-center justify-center">
             {themeMode === "dark" ? <Moon className="w-4 h-4 text-amber-300" /> : <Sun className="w-4 h-4 text-amber-200" />}
           </div>
-          <span>Theme & A11y</span>
+          <span>{t("theme_a11y")}</span>
         </button>
       )}
 
@@ -128,7 +128,7 @@ export function AccessibilityToolbar() {
                 <Accessibility className="w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-bold text-sm text-foreground">Theme & Accessibility</h3>
+                <h3 className="font-bold text-sm text-foreground">{t("theme_accessibility")}</h3>
                 <p className="text-[11px] text-muted">Dark / Light mode & Inclusive Care</p>
               </div>
             </div>

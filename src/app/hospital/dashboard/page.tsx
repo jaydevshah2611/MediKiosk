@@ -281,7 +281,7 @@ export default function HospitalDashboard() {
   };
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center">Loading Hospital Admin Session...</div>;
+    return <div className="min-h-screen flex items-center justify-center">{t("loading_hospital")}</div>;
   }
 
   return (
@@ -315,7 +315,7 @@ export default function HospitalDashboard() {
                 </div>
                 {user.abhaCertified && (
                   <span className="px-2 py-0.5 rounded-full text-[10px] font-extrabold bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3" /> ABDM Node
+                    <ShieldCheck className="w-3 h-3" /> {t("abdm_node")}
                   </span>
                 )}
               </div>
@@ -350,12 +350,12 @@ export default function HospitalDashboard() {
         {/* Tab Bar */}
         <div className="max-w-7xl mx-auto px-4 flex items-center gap-1 overflow-x-auto border-t border-border/60 pt-1">
           {[
-            { id: "dashboard", label: "Overview", icon: <LayoutDashboard className="w-4 h-4" /> },
-            { id: "tokens", label: "Live OPD Queue", icon: <Clock className="w-4 h-4" /> },
-            { id: "doctors", label: "Doctor Registry", icon: <Users className="w-4 h-4" /> },
-            { id: "departments", label: "Clinical Wings", icon: <Building2 className="w-4 h-4" /> },
-            { id: "patients", label: "Patient Directory", icon: <Activity className="w-4 h-4" /> },
-            { id: "analytics", label: "OPD Analytics", icon: <TrendingUp className="w-4 h-4" /> }
+            { id: "dashboard", label: t("tab_overview"), icon: <LayoutDashboard className="w-4 h-4" /> },
+            { id: "tokens", label: t("live_opd_queue"), icon: <Clock className="w-4 h-4" /> },
+            { id: "doctors", label: t("tab_doctors"), icon: <Users className="w-4 h-4" /> },
+            { id: "departments", label: t("tab_departments"), icon: <Building2 className="w-4 h-4" /> },
+            { id: "patients", label: t("tab_directory"), icon: <Activity className="w-4 h-4" /> },
+            { id: "analytics", label: t("tab_analytics"), icon: <TrendingUp className="w-4 h-4" /> }
           ].map(tab => (
             <button
               key={tab.id}
@@ -401,8 +401,8 @@ export default function HospitalDashboard() {
                   <div className="z-10">
                     <div className="text-2xl sm:text-3xl font-bold text-foreground group-hover:text-primary transition-colors">{stats.totalPatients}</div>
                     <div className="text-xs text-muted font-medium mt-0.5 flex items-center gap-1">
-                      <span>Total Registered</span>
-                      <span className="text-[10px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+                      <span>{t("total_registered")}</span>
+                      <span className="text-[10px] text-primary font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("view")}</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all z-10">
@@ -425,8 +425,8 @@ export default function HospitalDashboard() {
                   <div className="z-10">
                     <div className="text-2xl sm:text-3xl font-bold text-amber-500 group-hover:scale-105 transition-transform">{stats.waiting}</div>
                     <div className="text-xs text-muted font-medium mt-0.5 flex items-center gap-1">
-                      <span>Waiting in OPD</span>
-                      <span className="text-[10px] text-amber-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+                      <span>{t("waiting_opd")}</span>
+                      <span className="text-[10px] text-amber-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("view")}</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-amber-500 group-hover:text-white transition-all z-10">
@@ -449,8 +449,8 @@ export default function HospitalDashboard() {
                   <div className="z-10">
                     <div className="text-2xl sm:text-3xl font-bold text-sky-500 group-hover:scale-105 transition-transform">{stats.inConsult}</div>
                     <div className="text-xs text-muted font-medium mt-0.5 flex items-center gap-1">
-                      <span>In Consultation</span>
-                      <span className="text-[10px] text-sky-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+                      <span>{t("in_consultation")}</span>
+                      <span className="text-[10px] text-sky-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("view")}</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-sky-500/10 text-sky-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-sky-500 group-hover:text-white transition-all z-10">
@@ -473,8 +473,8 @@ export default function HospitalDashboard() {
                   <div className="z-10">
                     <div className="text-2xl sm:text-3xl font-bold text-emerald-500 group-hover:scale-105 transition-transform">{stats.completed}</div>
                     <div className="text-xs text-muted font-medium mt-0.5 flex items-center gap-1">
-                      <span>Completed</span>
-                      <span className="text-[10px] text-emerald-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">View →</span>
+                      <span>{t("completed")}</span>
+                      <span className="text-[10px] text-emerald-600 font-bold opacity-0 group-hover:opacity-100 transition-opacity">{t("view")}</span>
                     </div>
                   </div>
                   <div className="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center group-hover:scale-110 group-hover:bg-emerald-500 group-hover:text-white transition-all z-10">
@@ -639,12 +639,12 @@ export default function HospitalDashboard() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 bg-surface p-3 rounded-xl border border-border">
               {/* Status Filter */}
               <div className="flex items-center gap-1.5 overflow-x-auto">
-                <span className="text-xs font-bold text-muted uppercase mr-1">Status:</span>
+                <span className="text-xs font-bold text-muted uppercase mr-1">{t("status")}:</span>
                 {[
-                  { id: "all", label: "All Statuses", count: allTokens.length },
-                  { id: "waiting", label: "Waiting", count: stats.waiting },
-                  { id: "in_consultation", label: "In OPD", count: stats.inConsult },
-                  { id: "completed", label: "Completed", count: stats.completed },
+                  { id: "all", label: t("all_statuses"), count: allTokens.length },
+                  { id: "waiting", label: t("waiting"), count: stats.waiting },
+                  { id: "in_consultation", label: t("in_opd"), count: stats.inConsult },
+                  { id: "completed", label: t("completed"), count: stats.completed },
                 ].map((st) => (
                   <button
                     key={st.id}

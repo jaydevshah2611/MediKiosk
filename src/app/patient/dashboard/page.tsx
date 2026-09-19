@@ -42,7 +42,7 @@ export default function PatientDashboard() {
   }, [router]);
 
   if (!user) {
-    return <div className="min-h-screen flex items-center justify-center">Loading...</div>;
+    return <div className="min-h-screen flex items-center justify-center">{t("loading")}</div>;
   }
 
   return (
@@ -68,9 +68,9 @@ export default function PatientDashboard() {
                     {activeTokens[0].tokenNumber}
                   </div>
                   <div>
-                    <div className="font-bold text-foreground">Active OPD Token: {activeTokens[0].tokenNumber}</div>
+                    <div className="font-bold text-foreground">{t("active_opd_token")}: {activeTokens[0].tokenNumber}</div>
                     <div className="text-xs text-muted">
-                      Department: <strong className="uppercase">{activeTokens[0].department.replace(/_/g, " ")}</strong> • Status: <span className="font-semibold text-primary">{activeTokens[0].status.toUpperCase()}</span>
+                      {t("department")}: <strong className="uppercase">{activeTokens[0].department.replace(/_/g, " ")}</strong> • {t("status")}: <span className="font-semibold text-primary">{activeTokens[0].status.toUpperCase()}</span>
                     </div>
                   </div>
                 </div>
@@ -79,7 +79,7 @@ export default function PatientDashboard() {
                   onClick={() => router.push("/patient/visits")}
                   className="bg-primary text-primary-foreground font-semibold"
                 >
-                  Track Token
+                  {t("track_token")}
                 </Button>
               </CardContent>
             </Card>
@@ -149,7 +149,7 @@ export default function PatientDashboard() {
 
           {/* Inline Step-by-Step Portal Walkthrough */}
           <InlineGuideBanner
-            title="How to Use Your Patient Portal"
+            title={t("how_to_use_portal")}
             subtitle="Follow these 4 simple steps to triage, get OPD tokens, manage records, and track doctor visits"
             steps={[
               {
