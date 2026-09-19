@@ -256,7 +256,6 @@ export default function HospitalDashboard() {
       symptoms,
       { severityScore: tokenPriority ? 9 : 4, hospitalName: user?.hospitalName }
     );
-    );
 
     // Persist visit record
     visitManager.createVisitFromIntake({

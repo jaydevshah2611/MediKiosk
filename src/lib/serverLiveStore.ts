@@ -1,6 +1,7 @@
 import { mkdirSync, readFileSync, writeFileSync } from "fs";
 import { join } from "path";
 import type { Token } from "@/types/token";
+import type { PatientVisitRecord } from "@/lib/visitManager";
 import type { LivePatient, LiveStore } from "@/lib/liveTypes";
 
 type GlobalLive = typeof globalThis & {
